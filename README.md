@@ -170,6 +170,64 @@ pm.environment.set("future_date", check_out);
     "additionalneeds": "Bread override"
 }
 ```
+### Test Script:
+```javascript
+pm.test("200 Status code check", function () {
+     pm.response.to.have.status(200);
+});
+
+// var jsonData = pm.response.json();
+// pm.test("firstName Validate", function () {
+//      pm.expect(pm.response.json()).to.have.property('firstname').that.is.a('string').and.not.empty;
+// });
+
+
+// pm.test("LastName Validate", function (){
+//      var responseBody = pm.response.json();
+//      pm.expect(responseBody).to.be.an('object');
+//      pm.expect(responseBody).to.have.property('lastname').that.is.a('string').and.not.empty;
+// });
+
+// first name
+var jsonData = pm.response.json();
+pm.test("Validate FirstName", function () {
+    pm.expect(pm.environment.get("firstName")).to.eql(jsonData.firstname);
+});
+//last name
+pm.test("LastName Validate", function(){
+    pm.expect(pm.environment.get("lastName")).to.eql(jsonData.lastname);
+});
+
+//total price 
+pm.test("Verify Total Price", function (){
+    var totalPrice = parseFloat(pm.environment.get("totalPrice"));  // Convert string to number
+    pm.expect(totalPrice).to.eql(jsonData.totalprice);
+});
+
+//depositpaid
+pm.test("Verify depositpaid", function () {
+    var depositPaid = pm.environment.get("deposite_id") === 'true';  // Convert string to boolean
+    pm.expect(depositPaid).to.eql(jsonData.depositpaid);
+});
+
+// Date 
+var jsonData = pm.response.json();
+pm.test("Checkin Date Validate", function () {
+    pm.expect(pm.environment.get("date")).to.eql(jsonData.bookingdates.checkin);
+});
+
+pm.test("CheckOut Date", function() {
+    pm.expect(pm.environment.get("future_date")).to.eql(jsonData.bookingdates.checkout);
+});
+
+// check additionalneeds
+
+pm.test(" Verify additionalneeds", function() {
+    pm.expect(pm.environment.get("additionalNeed")).to.eql(jsonData.additionalneeds);
+});
+
+```
+
 ## _**3. Create A Token For Authentication.**_
 ### Request URL: https://restful-booker.herokuapp.com/auth
 ### Request Method: POST
